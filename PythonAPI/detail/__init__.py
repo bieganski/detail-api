@@ -54,20 +54,27 @@ NUM_BOUNDARY_DILATION_ITERATIONS = 1
 OCCLUSION_ARROW_DISTANCE = 7
 
 class Detail:
-    def __init__(self, annotation_file='json/trainval_withkeypoints.json',
+    def __init__(self,
+                 annotation_file='json/trainval_withkeypoints.json',
                  image_folder='VOCdevkit/VOC2010/JPEGImages',
-                 phase='trainval'):
+                 phase='trainval',
+                 minimal=False,
+                 divider = 10):
         """
         Constructor of Detail helper class for reading and visualizing annotations.
         :param annotation_file (str): location of annotation file
         :param image_folder (str): location to the folder that has pascal JPEG images.
         :param phase (str): image set to look at: train, val, test, or any combination
                             of the three (trainval, trainvaltest)
+        :param minimal: whether dataset should be minimal, to fast training
+        :param divider: if minimal, then take only 1/divider of all images
         :return:
         """
         # load dataset
         self.phase = phase
         self.img_folder = image_folder
+        self.minimal = minimal
+        self.divider = divider
 
         print('loading annotations into memory...')
         tic = time.time()
@@ -90,8 +97,10 @@ class Detail:
             self.kpts, self.bounds= {},{},{},{},{},{},{}
 
         # Organize data into instance variables
+        it = 0
         for img in self.data['images']:
             self.imgs[img['image_id']] = img
+        print("%d images loaded." % len(self.imgs))
         for segm in self.data['annos_segmentation']:        # many per image
             self.segmentations[segm['id']] = segm
         for occl in self.data['annos_occlusion']:           # one per image
@@ -918,3 +927,4 @@ class Detail:
 #                 'category_id': int(data[i, 6]),
 #                 }]
 #         return ann
+
