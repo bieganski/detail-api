@@ -1,4 +1,4 @@
-# PASCAL in Detail API
+# PASCAL in Detail API - modified for out ZPP2019 purposes
 
 Python API for the [PASCAL in Detail](https://sites.google.com/view/pasd/dataset) multi-task computer vision challenge. This API is a fork of [MS COCO vision challenge API](https://github.com/pdollar/coco).
 
