@@ -99,7 +99,11 @@ class Detail:
         # Organize data into instance variables
         it = 0
         for img in self.data['images']:
-            self.imgs[img['image_id']] = img
+            if img['phase'] in self.phase:
+                if not self.minimal:
+                    self.imgs[img['image_id']] = img
+                elif it % self.divider == 0:
+                    self.imgs[img['image_id']] = img
         print("%d images loaded." % len(self.imgs))
         for segm in self.data['annos_segmentation']:        # many per image
             self.segmentations[segm['id']] = segm
@@ -146,10 +150,14 @@ class Detail:
 
         self.keypoints_str = ['head', 'neck', 'lsho', 'lelb', 'lhip', 'lwri', 'lknee', 'lank', 'rsho', 'relb', 'rwri', 'rhip', 'rknee', 'rank']
         for skeleton_id, skeleton in self.kpts.items():
-             self.imgs[skeleton['image_id']]['keypoints'].append(skeleton_id)
+            img = self.imgs.get(skeleton['image_id'])
+            if img is not None:
+                img['keypoints'].append(skeleton_id)
 
         for segm_id, segm in self.segmentations.items():
-            img = self.imgs[segm['image_id']]
+            img = self.imgs.get(segm['image_id'])
+            if img is None:
+                continue
             cat = self.cats[segm['category_id']]
             img['annotations'].append(segm_id)
             cat['annotations'].append(segm_id)
@@ -927,4 +935,5 @@ class Detail:
 #                 'category_id': int(data[i, 6]),
 #                 }]
 #         return ann
+
 
